@@ -1,0 +1,143 @@
+// THIS CODE IS MY OWN WORK, IT WAS WRITTEN WITHOUT CONSULTING A TUTOR   
+// OR CODE WRITTEN BY OTHER STUDENTS - Eric Gu
+// ====================================================================
+// Do not edit the ".global F" line
+// ====================================================================
+        .global F
+
+
+// **************************************************************************
+// You can add more xdef directives above if you need more external labels
+//
+// - Remember that you can only add a label as a break point (stop location) 
+//   in EGTAPI if the label has been xdef'ed !!!
+//
+// - And I am pretty sure you will need to use break point for debugging 
+// - in this project... So add more xdef above to export your breakpoints
+// **************************************************************************
+
+
+/* ************************************************************
+   This label marks the address of the recursive function F
+   ************************************************************ */
+F:
+
+// ********************************************************************
+// Put your (recursive) function F here below
+//
+// F receives the parameters i, j, k on the stack
+// F returns the function value in register d0
+//
+// Make sure you use the "pop {pc}" instruction to return to the caller
+//
+// Also: Make sure you DE-ALLOCATE the local variables and restore fp
+//       BEFORE you return to the caller !!!
+// ********************************************************************
+
+           // Write your recursive function here
+push {lr}  // Save return address
+push {fp}  // Save frame pointer
+mov fp, sp // Make base pointer
+sub sp, sp, #8 
+//let's say #-4 is s
+//#-8 is t
+
+//i = fp + 8
+//j = fp + 12
+//k = fp + 16
+
+//if ( i <= 0 || j <= 0 )
+ldr r1, [fp, #8] //i
+cmp r1, #0
+ble if
+
+ldr r2, [fp, #12] //j 
+cmp r2, #0
+bgt elseif
+
+///// put return value -1 in return location r0
+if:
+mov     r0, #-1
+
+//postlude
+        mov     sp, fp          // De-allocate local variables
+        pop     {fp}            // Restore fp
+        pop     {pc}            // Return to the caller
+
+elseif:
+ldr r1, [fp, #8] //i
+ldr r2, [fp, #12] //j 
+ldr r4, [fp, #16] //k
+
+// else if ( i + j < k )
+add r3, r1, r2
+
+cmp r3, r4
+bge else
+
+mov r0, r3
+
+//postlude
+        mov     sp, fp          // De-allocate local variables
+        pop     {fp}            // Restore fp
+        pop     {pc}            // Return to the caller
+
+else:
+//r5 = s
+mov r5, #0
+str r5, [fp, #-4]
+//r6 = t
+mov r6, #1
+str r6, [fp, #-8]
+
+while:
+ldr r6, [fp, #-8] //t
+ldr r4, [fp, #16] //k
+cmp r6, r4
+bge End
+
+ldr r1, [fp, #8] //i
+ldr r2, [fp, #12] //j 
+
+
+//k-1 = r8
+sub r8, r4, #1
+//j-t = r9
+sub r9, r2, r6
+//i-t = r10
+sub r10, r1, r6
+
+push {r8}
+push {r9}
+push {r10}
+
+bl F
+add sp, sp, #12
+
+//r0 now holds value of recursive F
+ldr r5, [fp, #-4]
+
+add r5, r5, r0
+add r5, r5, #1
+
+str r5, [fp, #-4]
+
+ldr r6, [fp, #-8]
+add r6, r6, #1
+str r6, [fp, #-8]
+
+b while
+
+End:
+ldr r0, [fp, #-4]
+//postlude
+mov     sp, fp          // De-allocate local variables
+pop     {fp}            // Restore fp
+pop     {pc}            // Return to the caller
+//====================================================================
+// Don't add anything below this line...
+// ====================================================================
+        .end
+
+
+

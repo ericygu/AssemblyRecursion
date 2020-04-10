@@ -1,0 +1,108 @@
+/* =============================================================
+   WARNING: DO NOT make any change to this program
+
+            Don't even put the Honor code in this file, because
+            you DO NOT turn in file in !
+   ============================================================= */
+
+        .global main, Stop, CodeEnd, DataStart, DataEnd
+        .global Stop1, Stop2, Stop3, Stop4
+	.global ans
+
+main:
+	// Call F(-3, 5, 5)
+	mov	r0, #5
+	push	{r0}
+	mov	r0, #5
+	push	{r0}
+	mov	r0, #-3
+	push	{r0}
+	bl	F
+	add	sp, sp, #12
+
+	movw	r1, #:lower16:ans
+	movt	r1, #:upper16:ans
+	str	r0, [r1]		// ans = F()
+
+Stop1:
+        // Call F(5, -4, 5)
+        mov     r0, #5
+        push    {r0}
+        mov     r0, #-4
+        push    {r0}
+        mov     r0, #5
+        push    {r0}
+        bl      F
+        add     sp, sp, #12
+
+        movw    r1, #:lower16:ans
+        movt    r1, #:upper16:ans
+        str     r0, [r1]                // ans = F()
+
+Stop2:
+       // Call F(2, 5, 9)
+        mov     r0, #9
+        push    {r0}
+        mov     r0, #5
+        push    {r0}
+        mov     r0, #2
+        push    {r0}
+        bl      F
+        add     sp, sp, #12
+
+        movw    r1, #:lower16:ans
+        movt    r1, #:upper16:ans
+        str     r0, [r1]                // ans = F()
+
+Stop3:
+       // Call F(2, 2, 2)
+        mov     r0, #2
+        push    {r0}
+        mov     r0, #2
+        push    {r0}
+        mov     r0, #2
+        push    {r0}
+        bl      F
+        add     sp, sp, #12
+
+        movw    r1, #:lower16:ans
+        movt    r1, #:upper16:ans
+        str     r0, [r1]                // ans = F()
+
+Stop4:
+       // Call F(5, 5, 5)
+        mov     r0, #5
+        push    {r0}
+        mov     r0, #5
+        push    {r0}
+        mov     r0, #5
+        push    {r0}
+        bl      F
+        add     sp, sp, #12
+
+        movw    r1, #:lower16:ans
+        movt    r1, #:upper16:ans
+        str     r0, [r1]                // ans = F()
+
+// ====================================================================
+// Don't touch the Stop and CodeEnd label - Egtapi needs them
+// ====================================================================
+Stop:  
+	nop
+CodeEnd:
+       nop
+
+
+// ====================================================================
+// Variable section
+// ====================================================================
+	.data
+DataStart:
+
+ans:	.skip 4		// The ans variable used to store result of F
+
+DataEnd:
+        .end
+
+
+
